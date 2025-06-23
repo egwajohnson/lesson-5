@@ -1,28 +1,29 @@
-import { Request, Response } from "express";
 import multer from "multer";
 import fs from "fs";
 import path from "path";
-function creatFolder() {
-  const folderName = "./uploads";
 
-  fs.mkdir(folderName, (err) => {
-    if (err) {
-      console.error("Error creating folder:", err);
-    } else {
-      console.log("Folder created successfully!");
-    }
-  });
+const folderName = "./uploads";
+
+// Ensure uploads folder exists
+if (!fs.existsSync(folderName)) {
+  try {
+    fs.mkdirSync(folderName);
+    console.log("Folder created successfully!");
+  } catch (err) {
+    console.error("Error creating folder:", err);
+  }
 }
+
 const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, "uploads/");
+  destination: (req, file, cb) => {
+    cb(null, folderName);
   },
-  filename: function (req, file, cb) {
-    console.log(file);
-const ext = file.originalname.split(".")[1]
+  filename: (req, file, cb) => {
+    const ext = path.extname(file.originalname);
+    const baseName = path.basename(file.originalname, ext);
     const uniqueSuffix = Date.now() + "-" + Math.round(Math.random() * 1e9);
-    cb(null, file.originalname.split(".")[0] + "-" + `${uniqueSuffix}.${ext}`);
+    cb(null, `${baseName}-${uniqueSuffix}${ext}`);
   },
 });
 
-export const upload = multer({ storage: storage });
+export const upload = multer({ storage });

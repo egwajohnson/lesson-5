@@ -19,7 +19,7 @@ app.use(router);
 
 mongoConnection();
 app.listen(port, () => {
-  console.log(`the server is running on port   ${port}`);
+  console.log(`the server is running on port 2:   ${port}`);
 });
 
 // http://localhost:4000/home
